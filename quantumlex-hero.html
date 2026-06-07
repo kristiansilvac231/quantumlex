@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="es" id="html-root">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuantumLex — Holding Legal Chile</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root {
+  --cyan: #00e5ff;
+  --cyan-dim: #00b8d4;
+  --cyan-ghost: rgba(0,229,255,0.07);
+  --cyan-glow: rgba(0,229,255,0.3);
+  --cyan-line: rgba(0,229,255,0.15);
+  --deep: #020810;
+  --deep2: #040d18;
+  --deep3: #060f1e;
+  --white: #f0f4f8;
+  --white-dim: rgba(240,244,248,0.65);
+  --white-ghost: rgba(240,244,248,0.10);
+  --font-display: 'Cormorant Garamond', serif;
+  --font-tech: 'Rajdhani', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--deep);
+  color: var(--white);
+  font-family: var(--font-tech);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* CURSOR */
+.cursor {
+  position: fixed;
+  width: 8px; height: 8px;
+  background: var(--cyan);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%,-50%);
+  box-shadow: 0 0 10px var(--cyan), 0 0 22px var(--cyan-glow);
+}
+.cursor-ring {
+  position: fixed;
+  width: 30px; height: 30px;
+  border: 1px solid var(--cyan-line);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: all 0.14s ease;
+}
+
+/* CANVAS */
+#quantum-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* NAV */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.6rem 3rem;
+  background: rgba(2,8,16,0.85);
+  border-bottom: 1px solid var(--cyan-line);
+  backdrop-filter: blur(16px);
+  opacity: 0;
+  animation: fadeDown 0.8s ease 0.3s forwards;
+}
+
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: 1.55rem;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  color: var(--white);
+  text-decoration: none;
+}
+.nav-logo span { color: var(--cyan); }
+
+.nav-tag {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  color: var(--cyan);
+  border: 1px solid var(--cyan-line);
+  padding: 0.18rem 0.45rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-left: 0.7rem;
+  vertical-align: middle;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2.5rem;
+  list-style: none;
+}
+
+.nav-links a {
+  font-family: var(--font-tech);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--white-dim);
+  text-decoration: none;
+  transition: color 0.25s;
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -3px; left: 0;
+  width: 0; height: 1px;
+  background: var(--cyan);
+  transition: width 0.3s ease;
+}
+.nav-links a:hover { color: var(--cyan); }
+.nav-links a:hover::after { width: 100%; }
+
+.nav-cta {
+  font-family: var(--font-tech);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--deep);
+  background: var(--cyan);
+  padding: 0.55rem 1.5rem;
+  text-decoration: none;
+  clip-path: polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);
+  transition: all 0.25s ease;
+  box-shadow: 0 0 24px var(--cyan-glow);
+}
+.nav-cta:hover {
+  background: #e0f7fa;
+  box-shadow: 0 0 40px var(--cyan-glow);
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.lang-toggle {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  color: var(--cyan);
+  background: transparent;
+  border: 1px solid var(--cyan-line);
+  padding: 0.38rem 0.7rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.lang-toggle:hover {
+  background: var(--cyan-ghost);
+  border-color: rgba(0,229,255,0.4);
+}
+
+/* HERO */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  padding: 0 2rem;
+}
+
+/* Single radial ambient — no grid, no rings overlay on text */
+.hero-ambient {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 800px; height: 500px;
+  background: radial-gradient(ellipse, rgba(0,229,255,0.05) 0%, transparent 68%);
+  pointer-events: none;
+  animation: ambientPulse 7s ease-in-out infinite;
+}
+
+@keyframes ambientPulse {
+  0%,100% { opacity: 0.7; transform: translate(-50%,-50%) scale(1); }
+  50%      { opacity: 1;   transform: translate(-50%,-50%) scale(1.08); }
+}
+
+/* HERO CONTENT */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 960px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 2.4rem;
+  opacity: 0;
+  animation: fadeUp 0.7s ease 0.8s forwards;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.eyebrow::before, .eyebrow::after {
+  content: '';
+  display: block;
+  width: 36px; height: 1px;
+  background: var(--cyan);
+  opacity: 0.6;
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(5rem, 11vw, 10rem);
+  font-weight: 300;
+  line-height: 0.88;
+  letter-spacing: 0.02em;
+  color: var(--white);
+  margin-bottom: 0.6em;
+  opacity: 0;
+  animation: titleReveal 1.1s cubic-bezier(0.16,1,0.3,1) 1s forwards;
+}
+
+@keyframes titleReveal {
+  from { opacity: 0; transform: translateY(36px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.hero-title .ql { color: var(--cyan); }
+
+/* Glitch — only on QuantumLex text, no italic */
+.hero-title .ql {
+  position: relative;
+  display: inline-block;
+}
+.hero-title .ql::before,
+.hero-title .ql::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  color: var(--cyan);
+}
+.hero-title .ql::before {
+  color: rgba(255,20,80,0.35);
+  animation: glitch1 5s infinite;
+  clip-path: polygon(0 25%, 100% 25%, 100% 45%, 0 45%);
+}
+.hero-title .ql::after {
+  color: rgba(0,229,255,0.3);
+  animation: glitch2 5s infinite;
+  clip-path: polygon(0 62%, 100% 62%, 100% 78%, 0 78%);
+}
+@keyframes glitch1 {
+  0%,88%,100% { transform: translate(0); opacity: 0; }
+  90% { transform: translate(-4px,1px); opacity: 1; }
+  93% { transform: translate(3px,-1px); opacity: 0.7; }
+  96% { transform: translate(-2px,0); opacity: 0; }
+}
+@keyframes glitch2 {
+  0%,89%,100% { transform: translate(0); opacity: 0; }
+  91% { transform: translate(4px,1px); opacity: 1; }
+  94% { transform: translate(-3px,-1px); opacity: 0.6; }
+  97% { transform: translate(1px,0); opacity: 0; }
+}
+
+.hero-line {
+  font-family: var(--font-tech);
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  color: var(--white-dim);
+  margin-bottom: 3rem;
+  opacity: 0;
+  animation: fadeUp 0.7s ease 1.5s forwards;
+}
+
+.hero-line strong {
+  color: var(--white);
+  font-weight: 600;
+}
+
+/* Typewriter */
+.typewriter-row {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--cyan-dim);
+  letter-spacing: 0.08em;
+  height: 1.4em;
+  margin-bottom: 3.2rem;
+  opacity: 0;
+  animation: fadeUp 0.7s ease 1.7s forwards;
+}
+.tw { border-right: 2px solid var(--cyan); padding-right: 2px; }
+
+/* CTAs */
+.hero-ctas {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: fadeUp 0.7s ease 1.9s forwards;
+}
+
+.btn-primary {
+  font-family: var(--font-tech);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--deep);
+  background: var(--cyan);
+  padding: 0.95rem 2.4rem;
+  text-decoration: none;
+  clip-path: polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);
+  transition: all 0.28s ease;
+  box-shadow: 0 0 28px var(--cyan-glow);
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg,transparent,rgba(255,255,255,0.25),transparent);
+  transition: left 0.45s ease;
+}
+.btn-primary:hover::after { left: 100%; }
+.btn-primary:hover { box-shadow: 0 0 50px var(--cyan-glow); transform: translateY(-2px); }
+
+.btn-ghost {
+  font-family: var(--font-tech);
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  background: transparent;
+  padding: 0.95rem 2.4rem;
+  text-decoration: none;
+  border: 1px solid var(--cyan-line);
+  clip-path: polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);
+  transition: all 0.28s ease;
+}
+.btn-ghost:hover {
+  background: var(--cyan-ghost);
+  border-color: rgba(0,229,255,0.38);
+  transform: translateY(-2px);
+}
+
+/* SCROLL LINE */
+.scroll-hint {
+  position: absolute;
+  bottom: 2rem;
+  right: 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0;
+  animation: fadeUp 0.7s ease 2.4s forwards;
+}
+.scroll-hint span {
+  font-family: var(--font-mono);
+  font-size: 0.53rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--white-dim);
+  writing-mode: vertical-rl;
+}
+.scroll-line {
+  width: 1px; height: 44px;
+  background: linear-gradient(180deg, var(--cyan), transparent);
+  animation: scrollPulse 2.2s ease-in-out infinite;
+}
+@keyframes scrollPulse {
+  0%   { transform: scaleY(0); transform-origin: top; }
+  49%  { transform: scaleY(1); transform-origin: top; }
+  50%  { transform: scaleY(1); transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+
+/* COMPANIES */
+.companies-section {
+  position: relative;
+  z-index: 1;
+  padding: 6rem 3rem;
+  background: linear-gradient(180deg, var(--deep) 0%, var(--deep2) 100%);
+  border-top: 1px solid var(--cyan-line);
+}
+
+.section-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  text-align: center;
+  margin-bottom: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+.section-eyebrow::before, .section-eyebrow::after {
+  content: '';
+  display: block;
+  width: 28px; height: 1px;
+  background: var(--cyan);
+  opacity: 0.5;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 300;
+  text-align: center;
+  color: var(--white);
+  margin-bottom: 0.9rem;
+  letter-spacing: 0.02em;
+}
+.section-title span { color: var(--cyan); }
+
+.section-desc {
+  font-family: var(--font-tech);
+  font-size: 0.98rem;
+  color: var(--white-dim);
+  text-align: center;
+  max-width: 580px;
+  margin: 0 auto 4rem;
+  line-height: 1.8;
+}
+
+.companies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1px;
+  max-width: 1160px;
+  margin: 0 auto;
+  background: var(--cyan-line);
+}
+
+.company-card {
+  background: var(--deep2);
+  padding: 2.4rem;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.35s ease, transform 0.35s ease;
+  cursor: pointer;
+}
+
+.company-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 0; height: 2px;
+  background: var(--cyan);
+  box-shadow: 0 0 10px var(--cyan);
+  transition: width 0.45s ease;
+}
+.company-card:hover::after { width: 100%; }
+.company-card:hover { background: var(--deep3); transform: translateY(-3px); }
+
+.card-index {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: rgba(0,229,255,0.4);
+  letter-spacing: 0.2em;
+  margin-bottom: 1.2rem;
+  display: block;
+}
+.card-type {
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  border: 1px solid var(--cyan-line);
+  padding: 0.18rem 0.45rem;
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+.card-name {
+  font-family: var(--font-display);
+  font-size: 1.55rem;
+  font-weight: 400;
+  color: var(--white);
+  margin-bottom: 0.75rem;
+  line-height: 1.2;
+}
+.card-name span { color: var(--cyan); }
+.card-desc {
+  font-family: var(--font-tech);
+  font-size: 0.86rem;
+  line-height: 1.72;
+  color: var(--white-dim);
+  margin-bottom: 1.4rem;
+}
+.card-link {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: var(--cyan);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  transition: gap 0.25s;
+}
+.card-link:hover { gap: 0.75rem; }
+.card-link::after { content: '→'; }
+
+/* APPS */
+.apps-section {
+  position: relative;
+  z-index: 1;
+  padding: 6rem 3rem;
+  background: var(--deep3);
+  border-top: 1px solid var(--cyan-line);
+}
+
+.apps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
+  gap: 1px;
+  max-width: 1160px;
+  margin: 0 auto;
+  background: var(--cyan-line);
+}
+
+.app-card {
+  background: var(--deep);
+  padding: 2.4rem 2rem;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.35s ease;
+  cursor: pointer;
+}
+.app-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 2px; height: 0;
+  background: var(--cyan);
+  transition: height 0.4s ease;
+}
+.app-card:hover::after { height: 100%; }
+.app-card:hover { background: var(--deep2); }
+
+.app-tag {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  color: var(--cyan);
+  border: 1px solid var(--cyan-line);
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+}
+.app-name {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--white);
+  margin-bottom: 0.4rem;
+}
+.app-tagline {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: var(--cyan-dim);
+  margin-bottom: 1.1rem;
+  text-transform: uppercase;
+}
+.app-desc {
+  font-family: var(--font-tech);
+  font-size: 0.85rem;
+  line-height: 1.72;
+  color: var(--white-dim);
+}
+
+/* FOOTER */
+footer {
+  background: var(--deep);
+  border-top: 1px solid var(--cyan-line);
+  padding: 3rem;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+.footer-logo {
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  font-weight: 300;
+  color: var(--white);
+  letter-spacing: 0.1em;
+  margin-bottom: 0.4rem;
+}
+.footer-logo span { color: var(--cyan); }
+.footer-meta {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.15em;
+  color: var(--white-dim);
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+}
+.footer-links {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+.footer-links a {
+  font-family: var(--font-tech);
+  font-size: 0.78rem;
+  letter-spacing: 0.07em;
+  color: var(--white-dim);
+  text-decoration: none;
+  transition: color 0.25s;
+}
+.footer-links a:hover { color: var(--cyan); }
+.footer-copy {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.12em;
+  color: rgba(240,244,248,0.25);
+  text-transform: uppercase;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  nav { padding: 1rem 1.5rem; }
+  .nav-links, .scroll-hint { display: none; }
+  .hero-content { padding-top: 5rem; }
+  .metrics { flex-wrap: wrap; }
+  .companies-section, .apps-section { padding: 4rem 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<canvas id="quantum-canvas"></canvas>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <span>Quantum</span>Lex<span class="nav-tag">Holding</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#empresas" data-navkey="empresas" data-es="Empresas" data-en="Companies">Empresas</a></li>
+    <li><a href="#apps" data-navkey="plataformas" data-es="Plataformas" data-en="Platforms">Plataformas</a></li>
+    <li><a href="#contacto" data-navkey="contacto" data-es="Contacto" data-en="Contact">Contacto</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="lang-toggle" id="langBtn" onclick="toggleLang()">EN</button>
+    <a href="#contacto" class="nav-cta" data-es="Consulta Estratégica" data-en="Strategic Inquiry">Consulta Estratégica</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-ambient"></div>
+
+  <div class="hero-content">
+    <div class="eyebrow">Chile · LATAM · Desde 2009</div>
+
+    <h1 class="hero-title">
+      <span class="ql" data-text="QuantumLex">QuantumLex</span>
+    </h1>
+
+    <div class="typewriter-row">
+      <span class="tw" id="tw"></span>
+    </div>
+
+    <div class="hero-ctas">
+      <a href="#empresas" class="btn-primary">Explorar el Holding</a>
+      <a href="#contacto" class="btn-ghost">Consulta Estrategica</a>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- EMPRESAS -->
+<section class="companies-section" id="empresas">
+  <div class="section-eyebrow" id="sec1-eyebrow">Ecosistema Legal</div>
+  <h2 class="section-title" id="sec1-title">Las Empresas del <span>Holding</span></h2>
+  <p class="section-desc" id="sec1-desc">Seis verticales que cubren el ciclo legal completo de empresas, marcas, datos y personas en Chile y el mundo.</p>
+
+  <div class="companies-grid">
+    <div class="company-card">
+      <span class="card-index">01 / 06</span>
+      <span class="card-type" id="c1-type">Estudio Juridico</span>
+      <h3 class="card-name" id="c1-name"><span>MPD</span> Intelectual</h3>
+      <p class="card-desc" id="c1-desc">Estudio lider en propiedad intelectual, marcas, patentes y asesoria corporativa. Presencia en mas de 50 paises desde 2009.</p>
+      <a href="https://mpd-intelectual.cl" class="card-link" id="c1-link" target="_blank">mpd-intelectual.cl</a>
+    </div>
+    <div class="company-card">
+      <span class="card-index">02 / 06</span>
+      <span class="card-type" id="c2-type">Propiedad Industrial</span>
+      <h3 class="card-name" id="c2-name"><span>Observaciones</span> INAPI</h3>
+      <p class="card-desc" id="c2-desc">Respuesta especializada a observaciones de marca ante INAPI en 48 horas. Observaciones de fondo, forma y apelaciones ante el TDPI.</p>
+      <a href="https://observacionesinapi.cl" class="card-link" id="c2-link" target="_blank">observacionesinapi.cl</a>
+    </div>
+    <div class="company-card">
+      <span class="card-index">03 / 06</span>
+      <span class="card-type" id="c3-type">Derechos Personales</span>
+      <h3 class="card-name" id="c3-name"><span>Reclama</span>Datos</h3>
+      <p class="card-desc" id="c3-desc">Representacion ante la Agencia de Proteccion de Datos. Defensa de derechos ARCOP bajo la Ley 21.719. Plazo de 30 dias habiles para actuar.</p>
+      <a href="https://reclamadatos.cl" class="card-link" id="c3-link" target="_blank">reclamadatos.cl</a>
+    </div>
+    <div class="company-card">
+      <span class="card-index">04 / 06</span>
+      <span class="card-type" id="c4-type">Portal Ciudadano</span>
+      <h3 class="card-name" id="c4-name"><span>Agencia</span>Datos</h3>
+      <p class="card-desc" id="c4-desc">Portal de referencia sobre la Ley 21.719 en Chile. Derechos de personas y obligaciones de empresas. Vigente desde diciembre 2026.</p>
+      <a href="https://agenciadatos.cl" class="card-link" id="c4-link" target="_blank">agenciadatos.cl</a>
+    </div>
+    <div class="company-card">
+      <span class="card-index">05 / 06</span>
+      <span class="card-type" id="c5-type">Registro de Marcas Internacional</span>
+      <h3 class="card-name" id="c5-name"><span>Trademark</span> In Chile</h3>
+      <p class="card-desc" id="c5-desc">Registro de marcas en Chile para clientes de todo el mundo. 100% online, sin notario ni apostilla. Abogados certificados INAPI. Pago de honorario de éxito solo cuando tu marca está oficialmente registrada.</p>
+      <a href="https://www.trademarkinchile.com/es" class="card-link" id="c5-link" target="_blank">trademarkinchile.com</a>
+    </div>
+    <div class="company-card">
+      <span class="card-index">06 / 06</span>
+      <span class="card-type" id="c6-type">Vigilancia IP</span>
+      <h3 class="card-name" id="c6-name"><span>Sentinel</span> Alloy</h3>
+      <p class="card-desc" id="c6-desc">Plataforma de monitoreo continuo de marcas. Alertas ante infracciones y usos no autorizados en Chile y mercados internacionales.</p>
+      <a href="#apps" class="card-link" id="c6-link">Ver plataforma</a>
+    </div>
+  </div>
+</section>
+
+<!-- APPS -->
+<section class="apps-section" id="apps">
+  <div class="section-eyebrow" id="sec2-eyebrow">LegalTech</div>
+  <h2 class="section-title" id="sec2-title">Plataformas del <span>Futuro Legal</span></h2>
+  <p class="section-desc" id="sec2-desc">Cuatro aplicaciones SaaS construidas para optimizar el tiempo del abogado y elevar la practica legal al siglo XXI.</p>
+
+  <div class="apps-grid">
+    <div class="app-card">
+      <div class="app-tag" id="a1-tag">SaaS · Causas</div>
+      <h3 class="app-name" id="a1-name">VistaLegal</h3>
+      <p class="app-tagline" id="a1-tagline">Portal Cliente · Gestion de Causas</p>
+      <p class="app-desc" id="a1-desc">Plataforma digital que conecta estudios juridicos con sus clientes. Dashboard personalizado, seguimiento de causas en tiempo real y comunicacion centralizada.</p>
+    </div>
+    <div class="app-card">
+      <div class="app-tag" id="a2-tag">SaaS · Contratos</div>
+      <h3 class="app-name" id="a2-name">VistoBueno</h3>
+      <p class="app-tagline" id="a2-tagline">Ciclo de Vida Contractual</p>
+      <p class="app-desc" id="a2-desc">Control del ciclo completo de contratos corporativos. Desde la creacion hasta la firma, con checklist de 18 clausulas y arquitectura multitenant.</p>
+    </div>
+    <div class="app-card">
+      <div class="app-tag" id="a3-tag">IA · Agente Legal</div>
+      <h3 class="app-name" id="a3-name">LAOS</h3>
+      <p class="app-tagline" id="a3-tagline">Legal Assistant Operating System</p>
+      <p class="app-desc" id="a3-desc">Sistema operativo legal con IA. Automatiza emails, genera documentos y gestiona plazos en el estilo propio del abogado. Powered by Claude AI.</p>
+    </div>
+    <div class="app-card">
+      <div class="app-tag" id="a4-tag">Monitor · IP</div>
+      <h3 class="app-name" id="a4-name">Sentinel Alloy</h3>
+      <p class="app-tagline" id="a4-tagline">Vigilancia de Propiedad Intelectual</p>
+      <p class="app-desc" id="a4-desc">Monitoreo continuo de marcas con alertas ante infracciones en Chile y mercados internacionales. Proteccion proactiva del activo intangible.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="contacto">
+  <div class="footer-logo"><span>Quantum</span>Lex</div>
+  <p class="footer-meta">Holding Legal · Chile & LATAM · Desde 2009 · quantumlex.cl</p>
+  <div class="footer-links">
+    <a href="https://mpd-intelectual.cl" target="_blank">MPD Intelectual</a>
+    <a href="https://observacionesinapi.cl" target="_blank">Observaciones INAPI</a>
+    <a href="https://reclamadatos.cl" target="_blank">ReclamaDatos</a>
+    <a href="https://agenciadatos.cl" target="_blank">AgenciaDatos</a>
+    <a href="https://tradermakinchile.cl" target="_blank">TraderMakin</a>
+  </div>
+  <p class="footer-copy" id="footer-copy">© 2026 QuantumLex Holding · Todos los derechos reservados</p>
+</footer>
+
+<script>
+// CURSOR
+const cursor = document.getElementById('cursor');
+const ring   = document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+(function animCursor(){
+  cursor.style.left=mx+'px'; cursor.style.top=my+'px';
+  rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12;
+  ring.style.left=rx+'px'; ring.style.top=ry+'px';
+  requestAnimationFrame(animCursor);
+})();
+document.querySelectorAll('a,button,.company-card,.app-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{ring.style.width='48px';ring.style.height='48px';ring.style.borderColor='rgba(0,229,255,0.5)';});
+  el.addEventListener('mouseleave',()=>{ring.style.width='30px';ring.style.height='30px';ring.style.borderColor='rgba(0,229,255,0.15)';});
+});
+
+// CANVAS — particles + connections + mouse waves
+const canvas = document.getElementById('quantum-canvas');
+const ctx = canvas.getContext('2d');
+let W,H,pts,mouse={x:-999,y:-999};
+
+function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
+
+function init(){
+  pts=[];
+  const n=Math.floor((W*H)/15000);
+  for(let i=0;i<n;i++) pts.push({
+    x:Math.random()*W, y:Math.random()*H,
+    vx:(Math.random()-.5)*.28, vy:(Math.random()-.5)*.28,
+    r:Math.random()*1.2+.4,
+    pulse:Math.random()*Math.PI*2
+  });
+}
+
+let t=0;
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  t+=0.016;
+  pts.forEach((p,i)=>{
+    p.pulse+=0.018;
+    p.x+=p.vx; p.y+=p.vy;
+    if(p.x<0)p.x=W; if(p.x>W)p.x=0;
+    if(p.y<0)p.y=H; if(p.y>H)p.y=0;
+    // mouse repulsion
+    const dx=p.x-mouse.x, dy=p.y-mouse.y;
+    const d=Math.sqrt(dx*dx+dy*dy);
+    if(d<110){ const f=(110-d)/110*.7; p.vx+=(dx/d)*f*.08; p.vy+=(dy/d)*f*.08; }
+    p.vx*=.992; p.vy*=.992;
+
+    const a=(.3+.2*Math.sin(p.pulse));
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(0,229,255,${a})`; ctx.fill();
+
+    for(let j=i+1;j<pts.length;j++){
+      const q=pts[j];
+      const ddx=p.x-q.x, ddy=p.y-q.y;
+      const dd=Math.sqrt(ddx*ddx+ddy*ddy);
+      if(dd<110){
+        ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y);
+        ctx.strokeStyle=`rgba(0,229,255,${(1-dd/110)*.12})`;
+        ctx.lineWidth=.5; ctx.stroke();
+      }
+    }
+  });
+
+  // mouse wave rings
+  if(mouse.x>0){
+    for(let r=0;r<3;r++){
+      const rad=((t*55+r*75)%220);
+      const wa=Math.max(0,1-rad/220)*.07;
+      ctx.beginPath(); ctx.arc(mouse.x,mouse.y,rad,0,Math.PI*2);
+      ctx.strokeStyle=`rgba(0,229,255,${wa})`; ctx.lineWidth=1; ctx.stroke();
+    }
+  }
+  requestAnimationFrame(draw);
+}
+
+document.addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY;});
+window.addEventListener('resize',()=>{resize();init();});
+resize(); init(); draw();
+
+// TYPEWRITER
+// TYPEWRITER — bilingual
+const twPhrases = {
+  es: [
+    'Optimizamos el tiempo del abogado.',
+    'Propiedad Intelectual · Chile · LATAM · Global',
+    'IA Legal con etica como valor supremo.',
+    'Desde 2009. Para el 2030 y mas alla.',
+  ],
+  en: [
+    'We optimize the lawyer\'s most valuable asset: time.',
+    'Intellectual Property · Chile · LATAM · Global',
+    'Legal AI with ethics as the supreme value.',
+    'Since 2009. Built for 2030 and beyond.',
+  ]
+};
+let currentLang = 'es';
+let pi=0,ci=0,del=false,tw=document.getElementById('tw');
+function getPhrase(){ return twPhrases[currentLang][pi % twPhrases[currentLang].length]; }
+function loop(){
+  const ph=getPhrase();
+  if(!del){ tw.textContent=ph.slice(0,ci); ci++;
+    if(ci>ph.length){del=true;setTimeout(loop,2000);return;}
+    setTimeout(loop,52);
+  } else { tw.textContent=ph.slice(0,ci); ci--;
+    if(ci<0){del=false;pi=(pi+1)%twPhrases[currentLang].length;setTimeout(loop,380);return;}
+    setTimeout(loop,26);
+  }
+}
+setTimeout(loop,2500);
+
+// BILINGUAL TRANSLATION SYSTEM
+const translations = {
+  es: {
+    'nav-empresas': 'Empresas',
+    'nav-plataformas': 'Plataformas',
+    'nav-contacto': 'Contacto',
+    'nav-cta': 'Consulta Estratégica',
+    'eyebrow': 'Chile · LATAM · Desde 2009',
+    'btn-primary': 'Explorar el Holding',
+    'btn-ghost': 'Consulta Estratégica',
+    'sec1-eyebrow': 'Ecosistema Legal',
+    'sec1-title': 'Las Empresas del <span>Holding</span>',
+    'sec1-desc': 'Seis verticales que cubren el ciclo legal completo de empresas, marcas, datos y personas en Chile y el mundo.',
+    'sec2-eyebrow': 'LegalTech',
+    'sec2-title': 'Plataformas del <span>Futuro Legal</span>',
+    'sec2-desc': 'Cuatro aplicaciones SaaS construidas para optimizar el tiempo del abogado y elevar la practica legal al siglo XXI.',
+    'footer-meta': 'Legal Holding · Chile & LATAM · Since 2009 · quantumlex.cl',
+    'footer-copy': '© 2026 QuantumLex Holding · Todos los derechos reservados',
+    'c1-type':'Estudio Juridico','c1-name':'<span>MPD</span> Intelectual','c1-desc':'Estudio lider en propiedad intelectual, marcas, patentes y asesoria corporativa. Presencia en mas de 50 paises desde 2009.','c1-link':'mpd-intelectual.cl',
+    'c2-type':'Propiedad Industrial','c2-name':'<span>Observaciones</span> INAPI','c2-desc':'Respuesta especializada a observaciones de marca ante INAPI en 48 horas. Observaciones de fondo, forma y apelaciones ante el TDPI.','c2-link':'observacionesinapi.cl',
+    'c3-type':'Derechos Personales','c3-name':'<span>Reclama</span>Datos','c3-desc':'Representacion ante la Agencia de Proteccion de Datos. Defensa de derechos ARCOP bajo la Ley 21.719. Plazo de 30 dias habiles para actuar.','c3-link':'reclamadatos.cl',
+    'c4-type':'Portal Ciudadano','c4-name':'<span>Agencia</span>Datos','c4-desc':'Portal de referencia sobre la Ley 21.719 en Chile. Derechos de personas y obligaciones de empresas. Vigente desde diciembre 2026.','c4-link':'agenciadatos.cl',
+    'c5-type':'Marcas Internacional','c5-name':'<span>Trademark</span> In Chile','c5-desc':'Registro de marcas en Chile para clientes de todo el mundo. 100% online, sin notario ni apostilla. Abogados certificados INAPI. Honorario de éxito solo al registrar.','c5-link':'trademarkinchile.com',
+    'c6-type':'Vigilancia IP','c6-name':'<span>Sentinel</span> Alloy','c6-desc':'Plataforma de monitoreo continuo de marcas. Alertas ante infracciones y usos no autorizados en Chile y mercados internacionales.','c6-link':'Ver plataforma',
+    'a1-tag':'SaaS · Causas','a1-name':'VistaLegal','a1-tagline':'Portal Cliente · Gestion de Causas','a1-desc':'Plataforma digital que conecta estudios juridicos con sus clientes. Dashboard personalizado, seguimiento de causas en tiempo real y comunicacion centralizada.',
+    'a2-tag':'SaaS · Contratos','a2-name':'VistoBueno','a2-tagline':'Ciclo de Vida Contractual','a2-desc':'Control del ciclo completo de contratos corporativos. Desde la creacion hasta la firma, con checklist de 18 clausulas y arquitectura multitenant.',
+    'a3-tag':'IA · Agente Legal','a3-name':'LAOS','a3-tagline':'Legal Assistant Operating System','a3-desc':'Sistema operativo legal con IA. Automatiza emails, genera documentos y gestiona plazos en el estilo propio del abogado. Powered by Claude AI.',
+    'a4-tag':'Monitor · IP','a4-name':'Sentinel Alloy','a4-tagline':'Vigilancia de Propiedad Intelectual','a4-desc':'Monitoreo continuo de marcas con alertas ante infracciones en Chile y mercados internacionales. Proteccion proactiva del activo intangible.',
+  },
+  en: {
+    'nav-empresas': 'Companies',
+    'nav-plataformas': 'Platforms',
+    'nav-contacto': 'Contact',
+    'nav-cta': 'Strategic Inquiry',
+    'eyebrow': 'Chile · LATAM · Since 2009',
+    'hero-line': '<strong>Legal Holding</strong> — Intellectual Property · Data · Compliance · LegalTech',
+    'btn-primary': 'Explore the Holding',
+    'btn-ghost': 'Strategic Inquiry',
+    'sec1-eyebrow': 'Legal Ecosystem',
+    'sec1-title': 'The <span>Holding</span> Companies',
+    'sec1-desc': 'Six specialized verticals covering the complete legal cycle for companies, brands, data and people in Chile and worldwide.',
+    'sec2-eyebrow': 'LegalTech',
+    'sec2-title': 'Platforms of the <span>Legal Future</span>',
+    'sec2-desc': 'Four SaaS applications built to optimize the lawyer\'s time and elevate legal practice into the 21st century.',
+    'footer-meta': 'Legal Holding · Chile & LATAM · Since 2009 · quantumlex.cl',
+    'footer-copy': '© 2026 QuantumLex Holding · All rights reserved',
+    'c1-type':'Law Firm','c1-name':'<span>MPD</span> Intellectual','c1-desc':'Leading firm in intellectual property, trademarks, patents and corporate advisory. Active in over 50 countries since 2009.','c1-link':'mpd-intelectual.cl',
+    'c2-type':'Industrial Property','c2-name':'<span>INAPI</span> Observations','c2-desc':'Specialized response to trademark office actions before INAPI within 48 hours. Substantive, formal objections and appeals before the TDPI.','c2-link':'observacionesinapi.cl',
+    'c3-type':'Personal Rights','c3-name':'<span>Reclama</span>Datos','c3-desc':'Representation before the Personal Data Protection Agency. Defense of ARCOP rights under Law 21.719. 30 business days to act.','c3-link':'reclamadatos.cl',
+    'c4-type':'Citizen Portal','c4-name':'<span>Agencia</span>Datos','c4-desc':'Reference portal on Law 21.719 in Chile. Individual rights and corporate obligations. In force from December 2026.','c4-link':'agenciadatos.cl',
+    'c5-type':'International Trademark','c5-name':'<span>Trademark</span> In Chile','c5-desc':'Trademark registration in Chile for clients worldwide. 100% online, no notary or apostille required. INAPI-certified attorneys. Success fee only paid upon official registration.','c5-link':'trademarkinchile.com',
+    'c6-type':'IP Surveillance','c6-name':'<span>Sentinel</span> Alloy','c6-desc':'Continuous trademark monitoring platform. Alerts for infringements and unauthorized use in Chile and international markets.','c6-link':'View platform',
+    'a1-tag':'SaaS · Cases','a1-name':'VistaLegal','a1-tagline':'Client Portal · Case Management','a1-desc':'Digital platform connecting law firms with their clients. Personalized dashboard, real-time case tracking and centralized communication.',
+    'a2-tag':'SaaS · Contracts','a2-name':'VistoBueno','a2-tagline':'Contract Lifecycle Management','a2-desc':'Full control of corporate contract lifecycle. From creation to signature, with an 18-clause checklist and multitenant architecture.',
+    'a3-tag':'AI · Legal Agent','a3-name':'LAOS','a3-tagline':'Legal Assistant Operating System','a3-desc':'AI-powered legal operating system. Automates emails, generates documents and manages deadlines in the lawyer\'s own style. Powered by Claude AI.',
+    'a4-tag':'Monitor · IP','a4-name':'Sentinel Alloy','a4-tagline':'Intellectual Property Surveillance','a4-desc':'Continuous trademark monitoring with infringement alerts across Chile and international markets. Proactive protection of intangible assets.',
+  }
+};
+
+// DOM refs mapped to translation keys
+const domMap = [
+  { sel: '.eyebrow',          key: 'eyebrow',        html: false },
+  { sel: '.hero-line',        key: 'hero-line',       html: true  },
+  { sel: '.btn-primary',      key: 'btn-primary',     html: false },
+  { sel: '.btn-ghost',        key: 'btn-ghost',       html: false },
+  { sel: '.nav-cta',          key: 'nav-cta',         html: false },
+  { sel: '#sec1-eyebrow',     key: 'sec1-eyebrow',    html: false },
+  { sel: '#sec1-title',       key: 'sec1-title',      html: true  },
+  { sel: '#sec1-desc',        key: 'sec1-desc',       html: false },
+  { sel: '#sec2-eyebrow',     key: 'sec2-eyebrow',    html: false },
+  { sel: '#sec2-title',       key: 'sec2-title',      html: true  },
+  { sel: '#sec2-desc',        key: 'sec2-desc',       html: false },
+  { sel: '#footer-copy',      key: 'footer-copy',     html: false },
+  // Nav links
+  { sel: '[data-navkey="empresas"]',    key: 'nav-empresas',    html: false },
+  { sel: '[data-navkey="plataformas"]', key: 'nav-plataformas', html: false },
+  { sel: '[data-navkey="contacto"]',    key: 'nav-contacto',    html: false },
+  // Cards
+  { sel: '#c1-type', key:'c1-type', html:false },{ sel:'#c1-name', key:'c1-name', html:true },{ sel:'#c1-desc', key:'c1-desc', html:false },{ sel:'#c1-link', key:'c1-link', html:false },
+  { sel: '#c2-type', key:'c2-type', html:false },{ sel:'#c2-name', key:'c2-name', html:true },{ sel:'#c2-desc', key:'c2-desc', html:false },{ sel:'#c2-link', key:'c2-link', html:false },
+  { sel: '#c3-type', key:'c3-type', html:false },{ sel:'#c3-name', key:'c3-name', html:true },{ sel:'#c3-desc', key:'c3-desc', html:false },{ sel:'#c3-link', key:'c3-link', html:false },
+  { sel: '#c4-type', key:'c4-type', html:false },{ sel:'#c4-name', key:'c4-name', html:true },{ sel:'#c4-desc', key:'c4-desc', html:false },{ sel:'#c4-link', key:'c4-link', html:false },
+  { sel: '#c5-type', key:'c5-type', html:false },{ sel:'#c5-name', key:'c5-name', html:true },{ sel:'#c5-desc', key:'c5-desc', html:false },{ sel:'#c5-link', key:'c5-link', html:false },
+  { sel: '#c6-type', key:'c6-type', html:false },{ sel:'#c6-name', key:'c6-name', html:true },{ sel:'#c6-desc', key:'c6-desc', html:false },{ sel:'#c6-link', key:'c6-link', html:false },
+  // Apps
+  { sel:'#a1-tag', key:'a1-tag', html:false },{ sel:'#a1-name', key:'a1-name', html:false },{ sel:'#a1-tagline', key:'a1-tagline', html:false },{ sel:'#a1-desc', key:'a1-desc', html:false },
+  { sel:'#a2-tag', key:'a2-tag', html:false },{ sel:'#a2-name', key:'a2-name', html:false },{ sel:'#a2-tagline', key:'a2-tagline', html:false },{ sel:'#a2-desc', key:'a2-desc', html:false },
+  { sel:'#a3-tag', key:'a3-tag', html:false },{ sel:'#a3-name', key:'a3-name', html:false },{ sel:'#a3-tagline', key:'a3-tagline', html:false },{ sel:'#a3-desc', key:'a3-desc', html:false },
+  { sel:'#a4-tag', key:'a4-tag', html:false },{ sel:'#a4-name', key:'a4-name', html:false },{ sel:'#a4-tagline', key:'a4-tagline', html:false },{ sel:'#a4-desc', key:'a4-desc', html:false },
+];
+
+function applyLang(lang) {
+  const t = translations[lang];
+  domMap.forEach(({sel, key, html}) => {
+    const el = document.querySelector(sel);
+    if (!el || !t[key]) return;
+    if (html) el.innerHTML = t[key];
+    else el.textContent = t[key];
+  });
+  document.getElementById('html-root').lang = lang;
+  // reset typewriter
+  pi=0; ci=0; del=false;
+}
+
+function toggleLang() {
+  currentLang = currentLang === 'es' ? 'en' : 'es';
+  document.getElementById('langBtn').textContent = currentLang === 'es' ? 'EN' : 'ES';
+  applyLang(currentLang);
+}
+
+// SCROLL REVEAL for cards
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach((e,i)=>{
+    if(e.isIntersecting){
+      setTimeout(()=>{
+        e.target.style.opacity='1';
+        e.target.style.transform='translateY(0)';
+      },i*90);
+    }
+  });
+},{threshold:0.08});
+
+document.querySelectorAll('.company-card,.app-card').forEach(c=>{
+  c.style.opacity='0';
+  c.style.transform='translateY(24px)';
+  c.style.transition='opacity 0.55s ease, transform 0.55s ease, background 0.35s ease';
+  obs.observe(c);
+});
+</script>
+</body>
+</html>
