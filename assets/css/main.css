@@ -458,16 +458,16 @@ nav {
 
 .companies-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 1px;
-  max-width: 1160px;
+  max-width: 1400px;
   margin: 0 auto;
   background: var(--cyan-line);
 }
 
 .company-card {
   background: var(--deep2);
-  padding: 2.4rem;
+  padding: 1.6rem;
   position: relative;
   overflow: hidden;
   transition: background 0.35s ease, transform 0.35s ease;
