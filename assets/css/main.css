@@ -249,6 +249,7 @@ nav {
 }
 
 .hero-title .ql { color: var(--cyan); }
+.hero-title .ql .ql-lex { color: #fff; }
 
 /* Glitch — only on QuantumLex text */
 .hero-title .ql {
