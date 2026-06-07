@@ -128,8 +128,43 @@
   </div>
 </section>
 
+<!-- CONTACTO -->
+<section class="contact-section" id="contacto">
+  <div class="section-eyebrow">Contacto</div>
+  <h2 class="section-title">Consulta <span>Estratégica</span></h2>
+  <p class="section-desc">Cuéntanos tu caso y te respondemos en menos de 24 horas.</p>
+
+  <form class="contact-form" id="contact-form" novalidate>
+    <div>
+      <label for="cf-name">Nombre</label>
+      <input type="text" id="cf-name" name="nombre" placeholder="Tu nombre completo" required>
+    </div>
+    <div>
+      <label for="cf-email">Email</label>
+      <input type="email" id="cf-email" name="email" placeholder="tu@email.com" required>
+    </div>
+    <div>
+      <label for="cf-tema">Tema</label>
+      <select id="cf-tema" name="tema">
+        <option value="">Selecciona una área</option>
+        <option value="marcas">Marcas y Propiedad Intelectual</option>
+        <option value="datos">Protección de Datos</option>
+        <option value="compliance">Compliance</option>
+        <option value="legaltech">LegalTech / Plataformas</option>
+        <option value="otro">Otro</option>
+      </select>
+    </div>
+    <div>
+      <label for="cf-mensaje">Mensaje</label>
+      <textarea id="cf-mensaje" name="mensaje" placeholder="Describe brevemente tu consulta…" required></textarea>
+    </div>
+    <button type="submit" class="btn-send">Enviar consulta</button>
+    <p class="form-success" id="form-success">Mensaje enviado — te contactaremos pronto.</p>
+  </form>
+</section>
+
 <!-- FOOTER -->
-<footer id="contacto">
+<footer>
   <div class="footer-logo"><span>Quantum</span>Lex</div>
   <p class="footer-meta">Holding Legal · Chile & LATAM · Desde 2009 · quantumlex.cl</p>
   <div class="footer-links">
@@ -143,5 +178,14 @@
 <script src="assets/js/particles.js"></script>
 <script src="assets/js/lang.js"></script>
 <script src="assets/js/main.js"></script>
+<script>
+document.getElementById('contact-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const success = document.getElementById('form-success');
+  success.style.display = 'block';
+  this.reset();
+  setTimeout(() => { success.style.display = 'none'; }, 5000);
+});
+</script>
 </body>
 </html>

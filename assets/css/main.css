@@ -605,6 +605,84 @@ nav {
   color: var(--white-dim);
 }
 
+/* CONTACT FORM */
+.contact-section {
+  background: var(--deep2);
+  border-top: 1px solid var(--cyan-line);
+  padding: 6rem 2rem;
+  text-align: center;
+}
+.contact-form {
+  max-width: 560px;
+  margin: 2.5rem auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  text-align: left;
+}
+.contact-form label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  color: var(--cyan-dim);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 0.4rem;
+}
+.contact-form input,
+.contact-form select,
+.contact-form textarea {
+  width: 100%;
+  background: var(--deep3);
+  border: 1px solid var(--cyan-line);
+  color: var(--white);
+  font-family: var(--font-tech);
+  font-size: 0.9rem;
+  padding: 0.75rem 1rem;
+  outline: none;
+  transition: border-color 0.25s, box-shadow 0.25s;
+  box-sizing: border-box;
+}
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+  color: rgba(240,244,248,0.25);
+}
+.contact-form input:focus,
+.contact-form select:focus,
+.contact-form textarea:focus {
+  border-color: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan-glow);
+}
+.contact-form select option { background: var(--deep3); }
+.contact-form textarea { resize: vertical; min-height: 130px; }
+.contact-form .btn-send {
+  align-self: flex-start;
+  background: var(--cyan);
+  color: var(--deep);
+  font-family: var(--font-tech);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: none;
+  padding: 0.85rem 2.2rem;
+  cursor: pointer;
+  transition: opacity 0.25s, box-shadow 0.25s;
+}
+.contact-form .btn-send:hover {
+  opacity: 0.85;
+  box-shadow: 0 0 16px var(--cyan-glow);
+}
+.contact-form .form-success {
+  display: none;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  color: var(--cyan);
+  text-transform: uppercase;
+  margin-top: 0.5rem;
+}
+
 /* FOOTER */
 footer {
   background: var(--deep);
@@ -667,4 +745,6 @@ footer {
   .hero-content { padding-top: 5rem; }
   .metrics { flex-wrap: wrap; }
   .companies-section, .apps-section { padding: 4rem 1.5rem; }
+  .contact-section { padding: 4rem 1.5rem; }
+  .contact-form .btn-send { align-self: stretch; text-align: center; }
 }
