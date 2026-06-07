@@ -545,11 +545,17 @@ nav {
 }
 
 .apps-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 1px;
   max-width: 1160px;
   margin: 0 auto;
+  background: var(--cyan-line);
+}
+.apps-row-secondary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
   background: var(--cyan-line);
 }
 
@@ -561,6 +567,16 @@ nav {
   transition: background 0.35s ease;
   cursor: pointer;
 }
+.app-card.app-card--featured {
+  padding: 3.5rem 3rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.app-card.app-card--featured .app-name { font-size: 2.8rem; }
+.app-card.app-card--featured .app-desc  { max-width: 560px; font-size: 0.95rem; }
+
 .app-card::after {
   content: '';
   position: absolute;
@@ -747,4 +763,7 @@ footer {
   .companies-section, .apps-section { padding: 4rem 1.5rem; }
   .contact-section { padding: 4rem 1.5rem; }
   .contact-form .btn-send { align-self: stretch; text-align: center; }
+  .apps-row-secondary { grid-template-columns: 1fr; }
+  .app-card.app-card--featured { padding: 2.4rem 1.5rem; text-align: left; align-items: flex-start; }
+  .app-card.app-card--featured .app-name { font-size: 2rem; }
 }
