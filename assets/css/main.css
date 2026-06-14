@@ -450,9 +450,9 @@ nav {
 
 .companies-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
-  max-width: 1400px;
+  max-width: 1100px;
   margin: 0 auto;
 }
 
@@ -666,7 +666,7 @@ footer {
 
 /* ── RESPONSIVE ── */
 @media (max-width: 900px) {
-  .companies-grid { grid-template-columns: 1fr 1fr; }
+  .companies-grid { grid-template-columns: 1fr 1fr; max-width: 100%; }
 }
 @media (max-width: 768px) {
   nav { padding: 1.2rem 1.5rem; }
