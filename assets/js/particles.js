@@ -32,7 +32,7 @@ function draw() {
 
     const a = (.3 + .2 * Math.sin(p.pulse));
     ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(0,229,255,${a})`; ctx.fill();
+    ctx.fillStyle = `rgba(160,133,90,${a * 0.35})`; ctx.fill();
 
     for (let j = i + 1; j < pts.length; j++) {
       const q = pts[j];
@@ -40,7 +40,7 @@ function draw() {
       const dd = Math.sqrt(ddx * ddx + ddy * ddy);
       if (dd < 110) {
         ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
-        ctx.strokeStyle = `rgba(0,229,255,${(1 - dd / 110) * .12})`;
+        ctx.strokeStyle = `rgba(160,133,90,${(1 - dd / 110) * .07})`;
         ctx.lineWidth = .5; ctx.stroke();
       }
     }
@@ -49,9 +49,9 @@ function draw() {
   if (mouse.x > 0) {
     for (let r = 0; r < 3; r++) {
       const rad = ((t * 55 + r * 75) % 220);
-      const wa = Math.max(0, 1 - rad / 220) * .07;
+      const wa = Math.max(0, 1 - rad / 220) * .04;
       ctx.beginPath(); ctx.arc(mouse.x, mouse.y, rad, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(0,229,255,${wa})`; ctx.lineWidth = 1; ctx.stroke();
+      ctx.strokeStyle = `rgba(160,133,90,${wa})`; ctx.lineWidth = 1; ctx.stroke();
     }
   }
   requestAnimationFrame(draw);

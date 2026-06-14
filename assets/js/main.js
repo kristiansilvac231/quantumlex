@@ -13,8 +13,8 @@ document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; })
 })();
 
 document.querySelectorAll('a,button,.company-card,.app-card').forEach(el => {
-  el.addEventListener('mouseenter', () => { ring.style.width = '48px'; ring.style.height = '48px'; ring.style.borderColor = 'rgba(0,229,255,0.5)'; });
-  el.addEventListener('mouseleave', () => { ring.style.width = '30px'; ring.style.height = '30px'; ring.style.borderColor = 'rgba(0,229,255,0.15)'; });
+  el.addEventListener('mouseenter', () => { ring.style.width = '48px'; ring.style.height = '48px'; ring.style.borderColor = 'rgba(160,133,90,0.45)'; });
+  el.addEventListener('mouseleave', () => { ring.style.width = '30px'; ring.style.height = '30px'; ring.style.borderColor = 'rgba(28,24,20,0.18)'; });
 });
 
 // SCROLL REVEAL for cards
